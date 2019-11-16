@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import useFetch from 'react-fetch-hook';
 import Toast from 'react-native-root-toast';
@@ -9,16 +9,21 @@ import Card from '../../components/card';
 import Header from '../../components/header';
 import {RenderItem} from './components';
 
+import createTrigger from '../../core/trigger';
+import useTrigger from "react-use-trigger/useTrigger";
+
+const requestTrigger = createTrigger();
+
 const sendEat = (product, purchase_id, size) => {
   const data = {
     purchase_id: purchase_id,
-    product_id: product.product_id,
+    product_id: product.id,
     action_type: 'ACTION_EAT',
     amount: size,
     customer_id: 1,
     action_date: "2019-11-16 21:15:36.782768",
   };
-  console.log(JSON.stringify(data));
+  console.log(product, JSON.stringify(data));
   return fetch('http://40.118.124.20:5000/action/create', {
     method: 'POST',
     headers: {
@@ -28,7 +33,6 @@ const sendEat = (product, purchase_id, size) => {
   })
   .then((response) => response.json())
   .then(data => {
-    console.log(data)
     let toast = Toast.show('This is a message from server', {
       duration: Toast.durations.LONG,
       position: Toast.positions.BOTTOM,
@@ -40,13 +44,14 @@ const sendEat = (product, purchase_id, size) => {
       backgroundColor: 'white',
       textColor: '#FF9933',
     });
+    requestTrigger();
   }).catch((error) => {
     console.error(error);
 });;
 };
 
 function Main(props) {
-  const requestTriggerValue = "aaaaaa";
+  const requestTriggerValue = useTrigger(requestTrigger);
 
   const {isLoading, data} = useFetch('http://40.118.124.20:5000/inbox/1', {
     depends: [requestTriggerValue],

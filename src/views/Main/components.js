@@ -6,19 +6,29 @@ import Modal from 'react-native-modal';
 import {ListItem, Text} from 'react-native-ui-kitten';
 import Slider from '@react-native-community/slider';
 
-const ItemAccessory = prop => (
-  <Progress.Circle
-    size={28}
-    allowFontScaling={true}
-    textStyle={{fontSize: 14, color: '#cbcbcb'}}
-    progress={0.75}
-    borderWidth={0}
-    showsText={true}
-    formatText={() => `${prop.exp_time}`}
-    color={'#77CCA4' || '#F63501'}
-    unfilledColor="#f7f7f7"
-  />
-);
+const ItemAccessory = prop => {
+  const shelf_time = shelf_time > 0 ? shelf_time : 1;
+  const exp_time = exp_time > 0 ? exp_time : 1;
+  const progress = 100 / (shelf_time / exp_time) / 100 || 0;
+  console.log(
+    prop.shelf_time,
+    prop.exp_time,
+    100 / (prop.shelf_time / prop.exp_time) / 100,
+  );
+  return (
+    <Progress.Circle
+      size={28}
+      allowFontScaling={true}
+      textStyle={{fontSize: 14, color: '#cbcbcb'}}
+      progress={progress}
+      borderWidth={0}
+      showsText={true}
+      formatText={() => `${prop.exp_time > 99 ? 99 : prop.exp_time}`}
+      color={prop.exp_time > 0 ? '#77CCA4' : '#F63501'}
+      unfilledColor="#f7f7f7"
+    />
+  );
+};
 
 const ItemImage = props => (
   <View
@@ -203,7 +213,12 @@ export function RenderItem(props) {
           onPress={() => setVisibility(true)}
           title={`${product.name}`}
           icon={() => <ItemImage url={product.picture_url} />}
-          accessory={() => <ItemAccessory exp_time={props.exp_time} />}
+          accessory={() => (
+            <ItemAccessory
+              shelf_time={product.shelf_time}
+              exp_time={props.exp_time > 0 ? props.exp_time : 0}
+            />
+          )}
           description={`${Math.round(maxSize)} left`}
         />
       )}
