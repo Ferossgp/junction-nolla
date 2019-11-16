@@ -23,7 +23,6 @@ const sendEat = (product, purchase_id, size) => {
     customer_id: 1,
     action_date: "2019-11-16 21:15:36.782768",
   };
-  console.log(product, JSON.stringify(data));
   return fetch('http://40.118.124.20:5000/action/create', {
     method: 'POST',
     headers: {
