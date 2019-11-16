@@ -55,7 +55,7 @@ function Header(props) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 160,
+    height: 175,
     backgroundColor: '#F7F8FB',
   },
   progress: {
@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
   centered: {
     ...StyleSheet.absoluteFill,
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 0,
     marginHorizontal: 40,
   },
   row: {
-    padding: 16,
+    position: "relative",
+    marginTop: 32,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',

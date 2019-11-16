@@ -1,6 +1,7 @@
 import React from 'react';
 import {mapping} from '@eva-design/eva';
 import {theme} from './src/themes';
+import {StatusBar} from 'react-native';
 import {
   ApplicationProvider,
   IconRegistry,
@@ -17,6 +18,7 @@ const onNavigationStateChange = console.log;
 const App = () => (
   <>
     <IconRegistry icons={EvaIconsPack} />
+    <StatusBar  translucent={true} backgroundColor="rgba(0, 0, 0, 0)" barStyle="light-content" />
     <ApplicationProvider mapping={mapping} theme={theme}>
       <Router onNavigationStateChange={onNavigationStateChange} />
     </ApplicationProvider>
