@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import useFetch from 'react-fetch-hook';
 import Toast from 'react-native-root-toast';
+import * as Progress from 'react-native-progress';
 
 import {Text, Layout, Tab, TabView, Button, Icon} from 'react-native-ui-kitten';
 import AddProduct from '../AddProduct';
@@ -10,7 +11,7 @@ import Header from '../../components/header';
 import {RenderItem} from './components';
 
 import createTrigger from '../../core/trigger';
-import useTrigger from "react-use-trigger/useTrigger";
+import useTrigger from 'react-use-trigger/useTrigger';
 
 const requestTrigger = createTrigger();
 
@@ -21,7 +22,7 @@ const sendEat = (product, purchase_id, size) => {
     action_type: 'ACTION_EAT',
     amount: size,
     customer_id: 1,
-    action_date: "2019-11-16 21:15:36.782768",
+    action_date: '2019-11-16 21:15:36.782768',
   };
   return fetch('http://40.118.124.20:5000/action/create', {
     method: 'POST',
@@ -30,23 +31,24 @@ const sendEat = (product, purchase_id, size) => {
     },
     body: JSON.stringify(data),
   })
-  .then((response) => response.json())
-  .then(data => {
-    let toast = Toast.show('This is a message from server', {
-      duration: Toast.durations.LONG,
-      position: Toast.positions.BOTTOM,
-      shadow: true,
-      animation: true,
-      hideOnPress: true,
-      delay: 0,
-      opacity: 1,
-      backgroundColor: 'white',
-      textColor: '#FF9933',
+    .then(response => response.json())
+    .then(data => {
+      let toast = Toast.show('This is a message from server', {
+        duration: Toast.durations.LONG,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+        opacity: 1,
+        backgroundColor: 'white',
+        textColor: '#FF9933',
+      });
+      requestTrigger();
+    })
+    .catch(error => {
+      console.error(error);
     });
-    requestTrigger();
-  }).catch((error) => {
-    console.error(error);
-});;
 };
 
 function Main(props) {
@@ -61,10 +63,19 @@ function Main(props) {
   const progress = total > 0 && current > 0 ? 100 / (total / current) / 100 : 0;
   return (
     <Layout style={[styles.container]}>
-      <Header
-        progress={progress}
-        formatText={() => `${Math.round(current || 0)}\nkcal`}
-      />
+      <Header>
+        <Progress.Circle
+          size={90}
+          borderWidth={0}
+          showsText={true}
+          progress={progress}
+          formatText={() => `${Math.round(current || 0)}\nkcal`}
+          textStyle={styles.textStyle}
+          style={styles.progress}
+          color="rgba(255,255,255,1)"
+          unfilledColor="#ffa08b"
+        />
+      </Header>
       <View style={styles.content}>
         <TabView
           style={styles.tabView}
@@ -79,14 +90,16 @@ function Main(props) {
                   )}
                   {data &&
                     data.products &&
-                    data.products.slice(0,4).map(props => (
-                      <RenderItem
-                        key={props.id}
-                        {...props}
-                        sendEat={sendEat}
-                        daily_goal={data.daily_goal}
-                      />
-                    ))}
+                    data.products
+                      .slice(0, 4)
+                      .map(props => (
+                        <RenderItem
+                          key={props.id}
+                          {...props}
+                          sendEat={sendEat}
+                          daily_goal={data.daily_goal}
+                        />
+                      ))}
                   <View
                     style={{
                       flexDirection: 'row',
@@ -129,15 +142,15 @@ function Main(props) {
                   <AddProduct />
                 </View>
                 <Button
+                  onPress={() =>
+                    props.navigation.navigate({routeName: 'Trash'})
+                  }
                   size="giant"
                   appearance="ghost"
                   icon={style => <Icon fill="#77CCA4" name="trash-2-outline" />}
                 />
               </View>
             </>
-          </Tab>
-          <Tab title="NotProducts">
-            <Text>EMPTY</Text>
           </Tab>
         </TabView>
       </View>
@@ -153,6 +166,14 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     margin: 12,
+  },
+  progress: {
+    elevation: 2,
+  },
+  textStyle: {
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tabView: {flex: 1},
   tabTitleStyle: {},

@@ -210,7 +210,7 @@ export function RenderItem(props) {
       </Modal>
       {product && (
         <ListItem
-          onPress={() => setVisibility(true)}
+          onLongPress={() => setVisibility(true)}
           title={`${product.name}`}
           icon={() => <ItemImage url={product.picture_url} />}
           accessory={() => (
