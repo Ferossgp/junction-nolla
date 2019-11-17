@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Image} from 'react-native';
 import * as Progress from 'react-native-progress';
 import Modal from 'react-native-modal';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import {ListItem, Text} from 'react-native-ui-kitten';
 import Slider from '@react-native-community/slider';
@@ -209,18 +210,53 @@ export function RenderItem(props) {
         </View>
       </Modal>
       {product && (
-        <ListItem
-          onLongPress={() => setVisibility(true)}
-          title={`${product.name}`}
-          icon={() => <ItemImage url={product.picture_url} />}
-          accessory={() => (
-            <ItemAccessory
-              shelf_time={product.shelf_time}
-              exp_time={props.exp_time > 0 ? props.exp_time : 0}
-            />
+        <Swipeable
+          leftThreshold={80}
+          rightThreshold={80}
+          friction={2}
+          renderLeftActions={() => (
+            <View
+              style={{
+                alignContent: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#FC5F3C',
+                padding: 8,
+                flex: 1,
+              }}>
+              <Text style={{color: "white"}}>Waste</Text>
+            </View>
           )}
-          description={`${Math.round(maxSize)} left`}
-        />
+          renderRightActions={() => (
+            <View
+              style={{
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                backgroundColor: '#77CCA4',
+                padding: 8,
+                flex: 1,
+              }}>
+              <Text style={{color: "white"}}>Eat up</Text>
+            </View>
+          )}
+          onSwipeableLeftOpen={() =>
+            props.sendWaste(product, props.purchase_id, maxSize)
+          }
+          onSwipeableRightOpen={() =>
+            props.sendEat(product, props.purchase_id, maxSize)
+          }>
+          <ListItem
+            onLongPress={() => setVisibility(true)}
+            title={`${product.name}`}
+            icon={() => <ItemImage url={product.picture_url} />}
+            accessory={() => (
+              <ItemAccessory
+                shelf_time={product.shelf_time}
+                exp_time={props.exp_time > 0 ? props.exp_time : 0}
+              />
+            )}
+            description={`${Math.round(maxSize)} left`}
+          />
+        </Swipeable>
       )}
     </View>
   );

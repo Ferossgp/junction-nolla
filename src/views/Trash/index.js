@@ -39,7 +39,7 @@ const renderItem = ({item}) => (
   <ListItem
     title={`${item.name}`}
     icon={() => <ItemImage url={item.picture_url} />}
-    accessory={() => <Text category="h4">-{item.price}€</Text>}
+    accessory={() => <Text category="h4">-{Math.round(item.price*100)/100}€</Text>}
   />
 );
 
@@ -92,7 +92,7 @@ function Main(props) {
             <Text style={{color: 'white', fontSize: 9}}>
               You lost{' '}
               <Text style={{fontSize: 10, color: 'white', fontWeight: 'bold'}}>
-                {Math.round(ratio * 100) / 100}%
+                {Math.round(ratio * 100)}%
               </Text>{' '}
               of bought products.
             </Text>

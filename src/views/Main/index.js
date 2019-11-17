@@ -3,7 +3,7 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import useFetch from 'react-fetch-hook';
 import Toast from 'react-native-root-toast';
 import * as Progress from 'react-native-progress';
-
+import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {Text, Layout, Tab, TabView, Button, Icon} from 'react-native-ui-kitten';
 import AddProduct from '../AddProduct';
 import Card from '../../components/card';
@@ -15,11 +15,11 @@ import useTrigger from 'react-use-trigger/useTrigger';
 
 const requestTrigger = createTrigger();
 
-const sendEat = (product, purchase_id, size) => {
+const sendEat = action => (product, purchase_id, size) => {
   const data = {
     purchase_id: purchase_id,
     product_id: product.id,
-    action_type: 'ACTION_EAT',
+    action_type: action,
     amount: size,
     customer_id: 1,
     action_date: '2019-11-16 21:15:36.782768',
@@ -33,17 +33,19 @@ const sendEat = (product, purchase_id, size) => {
   })
     .then(response => response.json())
     .then(data => {
-      let toast = Toast.show('This is a message from server', {
-        duration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-        opacity: 1,
-        backgroundColor: 'white',
-        textColor: '#FF9933',
-      });
+      if (data.has_message) {
+        Toast.show(data.message + '\n' + data.karma, {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+          opacity: 1,
+          backgroundColor: 'white',
+          textColor: '#FF9933',
+        });
+      }
       requestTrigger();
     })
     .catch(error => {
@@ -57,7 +59,6 @@ function Main(props) {
   const {isLoading, data} = useFetch('http://40.118.124.20:5000/inbox/1', {
     depends: [requestTriggerValue],
   });
-
   const current = data && data.daily_goal && data.daily_goal.calories.progress;
   const total = data && data.daily_goal && data.daily_goal.calories.total;
   const progress = total > 0 && current > 0 ? 100 / (total / current) / 100 : 0;
@@ -94,9 +95,10 @@ function Main(props) {
                       .slice(0, 4)
                       .map(props => (
                         <RenderItem
-                          key={props.id}
+                          key={props.purchase_id}
                           {...props}
-                          sendEat={sendEat}
+                          sendEat={sendEat('ACTION_EAT')}
+                          sendWaste={sendEat('ACTION_WASTE')}
                           daily_goal={data.daily_goal}
                         />
                       ))}
@@ -181,4 +183,4 @@ const styles = StyleSheet.create({
   tabViewIndicator: {backgroundColor: 'transparent'},
 });
 
-export default Main;
+export default gestureHandlerRootHOC(Main);
