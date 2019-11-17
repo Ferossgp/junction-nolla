@@ -29,7 +29,7 @@ const ItemImage = ({url}) => (
     <Image
       style={{width: 34, height: 34}}
       source={{
-        uri: url,
+        uri: url + '?h=80',
       }}
     />
   </View>

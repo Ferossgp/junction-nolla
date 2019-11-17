@@ -42,7 +42,7 @@ const ItemImage = props => (
     <Image
       style={{width: 34, height: 34}}
       source={{
-        uri: props.url,
+        uri: props.url + '?h=80',
       }}
     />
   </View>
