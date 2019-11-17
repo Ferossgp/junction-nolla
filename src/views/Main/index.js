@@ -16,13 +16,27 @@ import useTrigger from 'react-use-trigger/useTrigger';
 const requestTrigger = createTrigger();
 
 const sendEat = action => (product, purchase_id, size) => {
+  const current_datetime = new Date();
+
   const data = {
     purchase_id: purchase_id,
     product_id: product.id,
     action_type: action,
     amount: size,
     customer_id: 1,
-    action_date: '2019-11-16 21:15:36.782768',
+    action_date:
+      current_datetime.getFullYear() +
+      '-' +
+      (current_datetime.getMonth() + 1) +
+      '-' +
+      current_datetime.getDate() +
+      ' ' +
+      current_datetime.getHours() +
+      ':' +
+      current_datetime.getMinutes() +
+      ':' +
+      current_datetime.getSeconds() +
+      '.0',
   };
   return fetch('http://40.118.124.20:5000/action/create', {
     method: 'POST',
