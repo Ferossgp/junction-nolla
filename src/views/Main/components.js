@@ -8,24 +8,19 @@ import {ListItem, Text} from 'react-native-ui-kitten';
 import Slider from '@react-native-community/slider';
 
 const ItemAccessory = prop => {
-  const shelf_time = shelf_time > 0 ? shelf_time : 1;
-  const exp_time = exp_time > 0 ? exp_time : 1;
-  const progress = 100 / (shelf_time / exp_time) / 100 || 0;
-  console.log(
-    prop.shelf_time,
-    prop.exp_time,
-    100 / (prop.shelf_time / prop.exp_time) / 100,
-  );
+  const shelf_time = prop.shelf_time > 0 ? prop.shelf_time : 1;
+  const exp_time = prop.exp_time > 0 ? prop.exp_time : 1;
+  const progress = (exp_time/shelf_time);
+  console.log(prop.exp_time, progress)
   return (
     <Progress.Circle
       size={28}
-      allowFontScaling={true}
       textStyle={{fontSize: 14, color: '#cbcbcb'}}
-      progress={progress}
+      progress={prop.exp_time === 0 ? 0 : progress}
       borderWidth={0}
       showsText={true}
       formatText={() => `${prop.exp_time > 99 ? 99 : prop.exp_time}`}
-      color={prop.exp_time > 0 ? '#77CCA4' : '#F63501'}
+      color={"#FF7759"}
       unfilledColor="#f7f7f7"
     />
   );
